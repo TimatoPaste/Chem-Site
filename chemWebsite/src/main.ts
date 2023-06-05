@@ -18,7 +18,7 @@ import { AppModule } from './app/app.module';
 	(Parse as any).serverURL = 'https://parseapi.back4app.com/';
 
 
-	export async function add(listName:string, Id: string,resourceName: string, link: string){
+	export async function add(listName:string, Id: string, Type: string, resourceName: string, Link: string, Approved:boolean){
 
 		//extend gets db address of a specific class/list. Makes new class/list if it doesn't exist
 		//can create and write to new classes because they are public by default
@@ -29,23 +29,16 @@ import { AppModule } from './app/app.module';
 		let add = new list();
 
 		//sets attributes of the data point (attribute, value)
-		add.set("Id", Id);
-		add.set("Link",link.trim());
-		add.set("resourceName",resourceName.trim());
+		add.set("Id",Id.trim());
+		add.set("Type",Type.trim().toLowerCase());
+		add.set("resourceName",resourceName.trim().toLowerCase());
+		add.set("Link",Link.trim());
+		add.set("Approved",Approved);
 
 		//pushes the change to the db
 		add.save();
 	}
 	
-	export class attributeHolder{ 
-		resourceName:string;
-		Link:string;
-		
-		constructor(resourceName:string, Link: string){
-			this.resourceName = resourceName;
-			this.Link = Link;
-		}
-	}
 	export async function read(listName: string, attribute: string, val: string|number){
 		//references db list/class for reading later
 		let list = Parse.Object.extend(listName);
@@ -58,35 +51,21 @@ import { AppModule } from './app/app.module';
 
 		//query.find returns Parse.object[], in this case, it pipes into the first function of the then
 		//.then returns a promise object that takes one or two functions. Runs 1st one if promise resolved (parameter will be array of Parse.object). Runs 2nd if promise rejected
-		let unwrappedObjects: attributeHolder[] = [];
+		let parseObjects: any[] = [];
 		query.find()
 			.then((results)=>{
 				for(let a = 0;a<results.length;a++){
-					unwrappedObjects.push(new attributeHolder(results[a].get("resourceName"), results[a].get("Link")));
+					//implement process to move into to frontend here using results[a].get(attributeName:string)
 				}
 			}).catch((error)=>{
 				console.log(error);
 			})
-		return unwrappedObjects;
-		
 	}
-	let main = async(): Promise<void>=>{
-	//figure out how to enable top-level awaits during summer. for now, can just use a main function
+	//how to enable top-level await?
 
 
 	//adds value to database in class Links with Id val 2, resourceName val and Link val
-		add("Links","2","Never Gonna Give You Up","https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-		
-			let thing:attributeHolder[] = await read("Links", "Id","2");
-			
-			for(let a = 0;a<thing.length;a++){
-				console.log(thing[a].resourceName);
-				console.log(thing[a].Link);
-				console.log("");
-			}
-	}
-	main();
-	
+	add("Links","2","Never Gonna Give You Up","https://www.youtube.com/watch?v=dQw4w9WgXcQ");	
 	
 	//saved some useful stuff in bookmarks to help with ACL and querying + custom object id
 
