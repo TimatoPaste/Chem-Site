@@ -65,7 +65,7 @@ import { AppModule } from './app/app.module';
 
 
 	//adds value to database in class Links with Id val 2, resourceName val and Link val
-	add("Links","2","Never Gonna Give You Up","https://www.youtube.com/watch?v=dQw4w9WgXcQ");	
+	//add("Links","2","video","Never Gonna Give You Up","https://www.youtube.com/watch?v=dQw4w9WgXcQ",false);	
 	
 	//saved some useful stuff in bookmarks to help with ACL and querying + custom object id
 
